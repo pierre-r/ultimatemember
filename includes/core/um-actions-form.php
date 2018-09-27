@@ -454,9 +454,9 @@ function um_submit_form_errors_hook_( $args ) {
 						UM()->form()->add_error($key, sprintf(__('Your %s must contain less than %s characters','ultimate-member'), $array['label'], $array['max_chars']) );
 					}
 				}
-                     
+
 				$profile_show_html_bio = UM()->options()->get('profile_show_html_bio');
-					
+
 				if(  $profile_show_html_bio == 1 && $key !== "description" ){
 					if ( isset( $array['html'] ) && $array['html'] == 0 ) {
 						if ( wp_strip_all_tags( $args[$key] ) != trim( $args[$key] ) ) {
@@ -654,6 +654,10 @@ function um_submit_form_errors_hook_( $args ) {
 									UM()->form()->add_error( $key, __('This email is already linked to an existing account','ultimate-member') );
 								} else if ( !is_email( $args[ $key ] ) ) {
 									UM()->form()->add_error( $key, __('This is not a valid email','ultimate-member') );
+								} else if ( !filter_var( $args[ $key ], FILTER_VALIDATE_EMAIL ) ) {
+									UM()->form()->add_error( $key, __('This is not a valid email','ultimate-member') );
+								} else if ( !preg_match( '/^\w[\w\-\+\.]*\w@[\w\-]{2,}(\.[\w\-]{2,})*\.[a-z]{2,6}$/i', $args[ $key ] ) ) {
+									UM()->form()->add_error( $key, __('This is not a valid email','ultimate-member') );
 								} else if ( ! UM()->validation()->safe_username( $args[ $key ] ) ) {
 									UM()->form()->add_error( $key,  __('Your email contains invalid characters','ultimate-member') );
 								}
@@ -665,7 +669,7 @@ function um_submit_form_errors_hook_( $args ) {
 								} else if ( $args[ $key ] != '' && email_exists( $args[ $key ] ) ) {
 									UM()->form()->add_error($key, __('This email is already linked to an existing account','ultimate-member') );
 								} else if ( $args[ $key ] != '' ) {
-										
+
 									$users = get_users('meta_value='.$args[ $key ]);
 
 									foreach ( $users as $user ) {
@@ -674,7 +678,7 @@ function um_submit_form_errors_hook_( $args ) {
 										}
 									}
 
-										
+
 								}
 
 							}
@@ -699,7 +703,7 @@ function um_submit_form_errors_hook_( $args ) {
 								}
 							}
 							break;
-							
+
 						case 'alphabetic':
 
 							if ( $args[$key] != '' ) {
@@ -728,7 +732,7 @@ function um_submit_form_errors_hook_( $args ) {
 			}
 
 			if ( isset( $args['description'] ) ) {
-					
+
 				$max_chars = UM()->options()->get('profile_bio_maxchars');
 				$profile_show_bio = UM()->options()->get('profile_show_bio');
 
